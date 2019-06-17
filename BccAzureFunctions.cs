@@ -145,7 +145,7 @@ namespace BccAzureFunctions
     public class Account
     {
 
-        public string build = "06/17/2019 08.388.48.821";
+        public string build = "06/17/2019 14.43.40.351";
         private static DateTime dateTime = DateTime.Now;
         public string mode = "";
         public string senderId = "";
