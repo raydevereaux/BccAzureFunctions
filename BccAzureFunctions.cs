@@ -16,20 +16,23 @@ namespace BccAzureFunctions
     public static class FunctionPostBlob
     {
         [FunctionName("PostBlob")]
-        public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = "postblob/{mode}/{type}/{ext}")] HttpRequest req, ILogger log, string mode, string type, string ext)
+        public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = "postblob/{mode}/{senderid}/{doctype}/{ext}")] HttpRequest req,
+            ILogger log, string mode, string senderId, string docType, string ext)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             Account account = new Account();
             account.mode = mode;
-            account.type = type;
-            account.extension = ext;
-            account.objlen = requestBody.Length;
+            account.senderId = senderId;
+            account.docType = docType;
+            account.ext = ext;
+            account.method = "postblob";
+
+            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+            account.objLen = requestBody.Length;
 
             if (requestBody.Length > 0)
             {
-                account.method = "postblob";
                 try
                 {
                     BlobTransferAsync(account.getObjName(), requestBody, account);
@@ -73,18 +76,21 @@ namespace BccAzureFunctions
     {
         [FunctionName("PostFile")]
         public static async Task<IActionResult> CreateBlob(
-       [HttpTrigger(AuthorizationLevel.Function, "post", Route = "postfile/{mode}/{type}/{ext}")]HttpRequest req,
+       [HttpTrigger(AuthorizationLevel.Function, "post", Route = "postfile/{mode}/{senderid}/{doctype}/{ext}")]HttpRequest req,
        //[Blob("bccGrayTech", Connection = "AzureWebJobsStorage")] CloudBlobContainer bccGraytechContainer,
-       ILogger log, string mode, string type, string ext)
+       ILogger log, string mode, string senderId, string docType, string ext)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             Account account = new Account();
             account.mode = mode;
-            account.type = type;
-            account.extension = ext;
-            account.objlen = requestBody.Length;
+            account.senderId = senderId;
+            account.docType = docType;
+            account.ext = ext;
+            account.method = "postblob";
+            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+            account.objLen = requestBody.Length;
+            //account.hostname = System.Environment.GetEnvironmentVariable("HostName", EnvironmentVariableTarget.Process);
 
             if (requestBody.Length > 0)
             {
@@ -105,11 +111,11 @@ namespace BccAzureFunctions
         }
         public static async void FileTransferAsync(string azurename, string requestBody, Account account)
         {
-                string acctName  = System.Environment.GetEnvironmentVariable("AcctName", EnvironmentVariableTarget.Process);
-                string acctKey   = System.Environment.GetEnvironmentVariable("AcctKey", EnvironmentVariableTarget.Process);
-                string container = System.Environment.GetEnvironmentVariable("Container", EnvironmentVariableTarget.Process);
-                string directory = System.Environment.GetEnvironmentVariable("Directory", EnvironmentVariableTarget.Process);
-                string connectionString = $"DefaultEndpointsProtocol=https;AccountName={acctName};AccountKey={acctKey}";
+            string acctName  = System.Environment.GetEnvironmentVariable("AcctName", EnvironmentVariableTarget.Process);
+            string acctKey   = System.Environment.GetEnvironmentVariable("AcctKey", EnvironmentVariableTarget.Process);
+            string container = System.Environment.GetEnvironmentVariable("Container", EnvironmentVariableTarget.Process);
+            string directory = System.Environment.GetEnvironmentVariable("Directory", EnvironmentVariableTarget.Process);
+            string connectionString = $"DefaultEndpointsProtocol=https;AccountName={acctName};AccountKey={acctKey}";
             try
             {
                 CloudStorageAccount cloudStorageAccount = CloudStorageAccount.Parse(connectionString);
@@ -130,22 +136,53 @@ namespace BccAzureFunctions
         }
     }
 
-    public class Account {
+    public class Account
+    {
+
+        public string build = "06/17/2019 07.41.48.431";
+        private static DateTime dateTime = DateTime.Now;
         public string mode = "";
-        public string type = "";
+        public string senderId = "";
         public string method = "";
-        public string extension = "";
-        public string objname = "";
-        public int objlen = 0;
-        public DateTime dateTime = DateTime.Now;
+        public string docType = "";
+        public string ext = "";
+        public string objName = "";
+        public int objLen = 0;
+        public string hostName = System.Environment.MachineName.ToLower();
+        public string userName = System.Environment.UserName.Replace("Placeholder","az");
+        public string function = "BccAzureFunctions";
+        public string timestamp = dateTime.ToString("MM/dd/yyyy HH.mm.ss.fff");
         public string fatalException = "";
 
         public string getObjName()
         {
-            string name = "azure." + mode + "." + type + "."+method+"." + dateTime.ToString("yyyyMMddHHmmss") + "." + extension;
-            name = name.Replace("..", ".");
-            objname = name;
-            return name;
+            objName = getAzurename();
+            return objName;
+        }
+
+        private string getAzurename()
+        {
+            string azureName = System.Environment.GetEnvironmentVariable("AzureName", EnvironmentVariableTarget.Process);
+            azureName = azureName.Replace(@"${hostname}", hostName);
+            azureName = azureName.Replace(@"${function}", function);
+            azureName = azureName.Replace(@"${username}", userName);
+            azureName = azureName.Replace(@"${date}", dateTime.ToString("yyyyMMdd"));
+            azureName = azureName.Replace(@"${time}", dateTime.ToString("HHmmss"));
+            azureName = azureName.Replace(@"${timestamp}", dateTime.ToString("yyyyMMddHHmmssfff"));
+            azureName = azureName.Replace(@"${length}", objLen.ToString());
+            azureName = azureName.Replace(@"${mode}", mode);
+            azureName = azureName.Replace(@"${senderid}", senderId);
+            azureName = azureName.Replace(@"${method}", method);
+            azureName = azureName.Replace(@"${doctype}", docType);
+            azureName = azureName.Replace(@"${ext}", ext);
+
+            azureName = azureName.Replace(@"${", "");
+            azureName = azureName.Replace(@"}", "");
+            azureName = azureName.Replace(@" ", "");
+            azureName = azureName.Replace("..", "."); // last edit
+
+            return azureName;
+
         }
     }
 }
