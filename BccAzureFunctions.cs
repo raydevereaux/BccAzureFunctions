@@ -161,14 +161,11 @@ namespace BccAzureFunctions
     public class Account
     {
 
-<<<<<<< HEAD
-        public string build = "06/17/2019 07.41.48.431";
-=======
         public string build = "06/18/2019 08.00.45.569";
         //public string build = "06/17/2019 15.37.21.769";
         //public string build = "06/17/2019 14.43.40.351";
         //public string build = "06/17/2019 08.388.48.821";
->>>>>>> develop
+        //public string build = "06/17/2019 07.41.48.431";
         private static DateTime dateTime = DateTime.Now;
         public string mode = "";
         public string senderId = "";
