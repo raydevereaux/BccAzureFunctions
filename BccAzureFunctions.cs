@@ -16,14 +16,9 @@ namespace BccAzureFunctions
     public static class FunctionPostBlob
     {
         [FunctionName("PostBlob")]
-<<<<<<< HEAD
-        public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = "postblob/{mode}/{senderid}/{doctype}/{ext}")] HttpRequest req,
-            ILogger log, string mode, string senderId, string docType, string ext)
-=======
         public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post"
             , Route = "postblob/{mode}/{senderid}/{doctype}/{ext}")] HttpRequest req
             , ILogger log, string mode, string senderId, string docType, string ext)
->>>>>>> develop
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
@@ -84,16 +79,9 @@ namespace BccAzureFunctions
     {
         [FunctionName("PostFile")]
         public static async Task<IActionResult> CreateBlob(
-<<<<<<< HEAD
        [HttpTrigger(AuthorizationLevel.Function, "post", Route = "postfile/{mode}/{senderid}/{doctype}/{ext}")]HttpRequest req,
        //[Blob("bccGrayTech", Connection = "AzureWebJobsStorage")] CloudBlobContainer bccGraytechContainer,
        ILogger log, string mode, string senderId, string docType, string ext)
-=======
-       [HttpTrigger(AuthorizationLevel.Function, "post"
-            , Route = "postfile/{mode}/{senderid}/{doctype}/{ext}")]HttpRequest req
-            //, [Blob("bccGrayTech", Connection = "AzureWebJobsStorage")] CloudBlobContainer bccGraytechContainer
-            , ILogger log, string mode, string senderId, string docType, string ext)
->>>>>>> develop
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
@@ -128,13 +116,8 @@ namespace BccAzureFunctions
         }
         public static async void FileTransferAsync(string azurename, string requestBody, Account account)
         {
-<<<<<<< HEAD
             string acctName  = System.Environment.GetEnvironmentVariable("AcctName", EnvironmentVariableTarget.Process);
             string acctKey   = System.Environment.GetEnvironmentVariable("AcctKey", EnvironmentVariableTarget.Process);
-=======
-            string acctName = System.Environment.GetEnvironmentVariable("AcctName", EnvironmentVariableTarget.Process);
-            string acctKey = System.Environment.GetEnvironmentVariable("AcctKey", EnvironmentVariableTarget.Process);
->>>>>>> develop
             string container = System.Environment.GetEnvironmentVariable("Container", EnvironmentVariableTarget.Process);
             string directory = System.Environment.GetEnvironmentVariable("Directory", EnvironmentVariableTarget.Process);
             string connectionString = $"DefaultEndpointsProtocol=https;AccountName={acctName};AccountKey={acctKey}";
@@ -175,11 +158,7 @@ namespace BccAzureFunctions
         public string objName = "";
         public int objLen = 0;
         public string hostName = System.Environment.MachineName.ToLower();
-<<<<<<< HEAD
         public string userName = System.Environment.UserName.Replace("Placeholder","az");
-=======
-        public string userName = System.Environment.UserName;
->>>>>>> develop
         public string function = "BccAzureFunctions";
         public string timestamp = dateTime.ToString("MM/dd/yyyy HH.mm.ss.fff");
         public string fatalException = "";
