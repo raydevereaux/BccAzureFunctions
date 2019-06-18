@@ -16,8 +16,14 @@ namespace BccAzureFunctions
     public static class FunctionPostBlob
     {
         [FunctionName("PostBlob")]
+<<<<<<< HEAD
         public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = "postblob/{mode}/{senderid}/{doctype}/{ext}")] HttpRequest req,
             ILogger log, string mode, string senderId, string docType, string ext)
+=======
+        public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post"
+            , Route = "postblob/{mode}/{senderid}/{doctype}/{ext}")] HttpRequest req
+            , ILogger log, string mode, string senderId, string docType, string ext)
+>>>>>>> develop
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
@@ -38,7 +44,8 @@ namespace BccAzureFunctions
                     BlobTransferAsync(account.getObjName(), requestBody, account);
                     if (account.fatalException.Length > 0)
                         return new BadRequestObjectResult(JsonConvert.SerializeObject(account, Formatting.Indented));
-                } catch (Exception e)
+                }
+                catch (Exception e)
                 {
                     account.fatalException = e.ToString();
                     return new BadRequestObjectResult(JsonConvert.SerializeObject(account, Formatting.Indented));
@@ -51,12 +58,13 @@ namespace BccAzureFunctions
 
         public static async void BlobTransferAsync(string azurename, string requestBody, Account account)
         {
-            string acctName  = System.Environment.GetEnvironmentVariable("AcctName", EnvironmentVariableTarget.Process);
-            string acctKey   = System.Environment.GetEnvironmentVariable("AcctKey", EnvironmentVariableTarget.Process);
+            string acctName = System.Environment.GetEnvironmentVariable("AcctName", EnvironmentVariableTarget.Process);
+            string acctKey = System.Environment.GetEnvironmentVariable("AcctKey", EnvironmentVariableTarget.Process);
             string container = System.Environment.GetEnvironmentVariable("Container", EnvironmentVariableTarget.Process);
             string directory = System.Environment.GetEnvironmentVariable("Directory", EnvironmentVariableTarget.Process);
             string connectionString = $"DefaultEndpointsProtocol=https;AccountName={acctName};AccountKey={acctKey}";
-            try { 
+            try
+            {
                 CloudStorageAccount cloudStorageAccount = CloudStorageAccount.Parse(connectionString);
                 CloudBlobClient cloudBlobClient = cloudStorageAccount.CreateCloudBlobClient();
                 CloudBlobContainer cloudBlobContainer = cloudBlobClient.GetContainerReference(container);
@@ -76,9 +84,16 @@ namespace BccAzureFunctions
     {
         [FunctionName("PostFile")]
         public static async Task<IActionResult> CreateBlob(
+<<<<<<< HEAD
        [HttpTrigger(AuthorizationLevel.Function, "post", Route = "postfile/{mode}/{senderid}/{doctype}/{ext}")]HttpRequest req,
        //[Blob("bccGrayTech", Connection = "AzureWebJobsStorage")] CloudBlobContainer bccGraytechContainer,
        ILogger log, string mode, string senderId, string docType, string ext)
+=======
+       [HttpTrigger(AuthorizationLevel.Function, "post"
+            , Route = "postfile/{mode}/{senderid}/{doctype}/{ext}")]HttpRequest req
+            //, [Blob("bccGrayTech", Connection = "AzureWebJobsStorage")] CloudBlobContainer bccGraytechContainer
+            , ILogger log, string mode, string senderId, string docType, string ext)
+>>>>>>> develop
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
@@ -95,24 +110,31 @@ namespace BccAzureFunctions
             if (requestBody.Length > 0)
             {
                 account.method = "postfile";
-                try { 
+                try
+                {
                     FileTransferAsync(account.getObjName(), requestBody, account);
-                    if (account.fatalException.Length>0)
+                    if (account.fatalException.Length > 0)
                         return new BadRequestObjectResult(JsonConvert.SerializeObject(account, Formatting.Indented));
-                } catch (Exception e)
+                }
+                catch (Exception e)
                 {
                     account.fatalException = e.ToString();
                     return new BadRequestObjectResult(JsonConvert.SerializeObject(account, Formatting.Indented));
                 }
-        }
+            }
             string json = JsonConvert.SerializeObject(account, Formatting.Indented);
             ObjectResult resp = new OkObjectResult(json);
             return resp;
         }
         public static async void FileTransferAsync(string azurename, string requestBody, Account account)
         {
+<<<<<<< HEAD
             string acctName  = System.Environment.GetEnvironmentVariable("AcctName", EnvironmentVariableTarget.Process);
             string acctKey   = System.Environment.GetEnvironmentVariable("AcctKey", EnvironmentVariableTarget.Process);
+=======
+            string acctName = System.Environment.GetEnvironmentVariable("AcctName", EnvironmentVariableTarget.Process);
+            string acctKey = System.Environment.GetEnvironmentVariable("AcctKey", EnvironmentVariableTarget.Process);
+>>>>>>> develop
             string container = System.Environment.GetEnvironmentVariable("Container", EnvironmentVariableTarget.Process);
             string directory = System.Environment.GetEnvironmentVariable("Directory", EnvironmentVariableTarget.Process);
             string connectionString = $"DefaultEndpointsProtocol=https;AccountName={acctName};AccountKey={acctKey}";
@@ -139,7 +161,14 @@ namespace BccAzureFunctions
     public class Account
     {
 
+<<<<<<< HEAD
         public string build = "06/17/2019 07.41.48.431";
+=======
+        public string build = "06/18/2019 08.00.45.569";
+        //public string build = "06/17/2019 15.37.21.769";
+        //public string build = "06/17/2019 14.43.40.351";
+        //public string build = "06/17/2019 08.388.48.821";
+>>>>>>> develop
         private static DateTime dateTime = DateTime.Now;
         public string mode = "";
         public string senderId = "";
@@ -149,7 +178,11 @@ namespace BccAzureFunctions
         public string objName = "";
         public int objLen = 0;
         public string hostName = System.Environment.MachineName.ToLower();
+<<<<<<< HEAD
         public string userName = System.Environment.UserName.Replace("Placeholder","az");
+=======
+        public string userName = System.Environment.UserName;
+>>>>>>> develop
         public string function = "BccAzureFunctions";
         public string timestamp = dateTime.ToString("MM/dd/yyyy HH.mm.ss.fff");
         public string fatalException = "";
